@@ -1,0 +1,81 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Cmcheck{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Clients</h3>
+                <div class="nk-block-des text-soft">
+                    <nav style="margin-left: 2px">
+                        <ul class="breadcrumb breadcrumb-arrow">
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_home') }}">Tableau de bord</a></li>
+                            <li class="breadcrumb-item active">Clients</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="nk-block-head-content">
+                <a href="{{ path('app_admin_client_create') }}" type="button" class="btn btn-primary btn-sm">Nouveau client</a>
+            </div>
+        </div>
+    </div>
+    <div class="container p-0">
+        <div class="card card-bordered p-3">
+            <div class="card-inner">
+                <table id="client" class="table datatable-init" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Societe</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if clients is defined %}
+                        {% for client in clients %}
+                            <tr>
+                                <td>{{ client.getSociete() }}</td>
+
+                                <td>{{ client.getNom() }}</td>
+                                <td>{{ client.getEmail() }}</td>
+                                <td>
+                                    <a href="{{ path('app_admin_client_notify',{id: client.getId()}) }}"
+                                       class="btn btn-sm btn-primary btn-dim">Notifier le client</a>
+                                    <a href="{{ path('app_admin_client_edit',{id: client.getId()}) }}"
+                                       class="btn btn-sm btn-warning btn-dim">Modifier</a>
+                                    <a href="#" class="btn btn-sm btn-danger btn-dim" data-bs-toggle="modal" data-bs-target="#modalSmall{{ client.getId() }}">Supprimer</a>
+
+                                    <div class="modal fade" tabindex="-1" id="modalSmall{{ client.getId() }}" aria-modal="true" role="dialog"
+                                        >
+                                        <div class="modal-dialog modal-sm" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Suppression</h5>
+                                                    <a href="#" class="close" data-bs-dismiss="modal"aria-label="Close">
+                                                        <em class="icon ni ni-cross"></em>
+                                                    </a>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>La suppression est irréversible. Êtes-vous vraiment sûr de vouloir supprimer ce client ?
+                                                    Vous perdrez tout le contenu en lien.</p>
+                                                </div>
+                                                <div class="modal-footer bg-light">
+                                                    <a href="#" class=" btn btn-gray btn-sm" data-bs-dismiss="modal" aria-label="Close">Annuler</a>
+                                                    <a href="{{ path('app_admin_client_delete',{id:client.getId()}) }}" class="btn btn-danger btn-sm">Continuer & Supprimer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

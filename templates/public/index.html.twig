@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Publications{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Bonjour {{ client.getSociete() }}</h3>
+                {% if page == 'check' %}
+                    <div class="nk-block-des text-soft">
+                        <nav style="margin-left: 2px">
+                            <ul class="breadcrumb breadcrumb-arrow">
+                                <li class="breadcrumb-item active">
+                                    {% if publications is not empty %}
+                                        Vous avez {{ publications|length }} publications en attente de validation
+                                    {% else %}
+                                        Vous n'avez aucune publication en attente de validation
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container p-0 mb-5">
+        {% if publications is not empty %}
+            {% for publication in publications %}
+                <div class="row publication_to_check mb-3">
+                    <div class="col-12 col-md-6 offset-md-3">
+                        <div class="card card-bordered">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col">
+                                        Publié le : {{ publication.getPublishedAt().format('d/m/Y H:i') }}
+                                    </div>
+                                    <div class="col text-end">
+                                        <em class="bi-{{ publication.getSocial() }}"></em>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-inner">
+                                {% if publication.getMedia() is not empty %}
+                                    {% if publication.getMedia()|length == 1 %}
+                                        {% if isVideoOrImage(absolute_url(asset('uploads/'~publication.getClient().getId()~'/'~publication.getMedia()[0]))) == 'image' %}
+                                            <img src="{{ asset('uploads/'~publication.getClient().getId()~'/'~publication.getMedia()[0]) }}" alt="">
+                                        {% elseif isVideoOrImage(absolute_url(asset('uploads/'~publication.getClient().getId()~'/'~publication.getMedia()[0]))) == 'video' %}
+                                            <video style="width:100%"
+                                                   src="{{ asset('uploads/'~publication.getClient().getId()~'/'~publication.getMedia()[0]) }}"
+                                                   controls></video>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="owl-carousel owl-theme">
+                                            {% for media in publication.getMedia() %}
+                                                {% if isVideoOrImage(absolute_url(asset('uploads/'~publication.getClient().getId()~'/'~media))) == 'image' %}
+                                                    <img src="{{ asset('uploads/'~publication.getClient().getId()~'/'~media) }}"
+                                                         alt="">
+                                                {% elseif isVideoOrImage(absolute_url(asset('uploads/'~publication.getClient().getId()~'/'~media))) == 'video' %}
+                                                    <video style="width:100%"
+                                                           src="{{ asset('uploads/'~publication.getClient().getId()~'/'~media) }}"
+                                                           controls></video>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                <div class="mt-2">
+                                    <p>{{ publication.getContent()|raw }}</p>
+                                </div>
+                            </div>
+                            {% if page == 'check' %}
+                                <div class="card-footer">
+                                <form action="{{ path('app_public_action',{token: app.request.query.get('token'), id: publication.getId()}) }}"
+                                      method="post" class="submitComment">
+                                    <div class="form-group mb-1">
+                                        <label for="commentaire" class="form-label">Commentaire</label>
+                                        <textarea name="commentaire" id="commentaire" class="form-control"></textarea>
+                                    </div>
+                                    <div class="btn-group w-100 mt-0 d-flex">
+                                        <button type="submit" name="action" value="validate" class="btn btn-success justify-content-center"
+                                                style="flex:1">J'accepte la publication
+                                        </button>
+                                        <button type="submit" name="action" value="rework" class="btn btn-danger justify-content-center"
+                                                style="flex:1">Il faut retravailler la publication
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            console.log('init')
+            $('.submitComment [type="submit"]').click(function (event) {
+                event.preventDefault();
+
+                let card = $(this).parents('.publication_to_check');
+                let url = $(this).parents('.submitComment').attr('action');
+                let comment = $(this).parents('.submitComment').find('[name="commentaire"]').val();
+                let action = $(this).attr('value');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        commentaire: comment,
+                        action: action
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            card.remove();
+                        }
+                    }
+                })
+            })
+        })
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Facturation{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Mon compte</h3>
+                <div class="nk-block-des text-soft">
+                    <nav style="margin-left: 2px">
+                        <ul class="breadcrumb breadcrumb-arrow">
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_home') }}">Tableau de bord</a></li>
+                            <li class="breadcrumb-item active">Mon compte</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="nk-block-head-content">
+            </div>
+        </div>
+    </div>
+    {% if subscription.getType() != 'free' %}
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card card-bordered">
+                    <div class="card-inner">
+                        <div class="between-center flex-wrap flex-md-nowrap g-3">
+                            <div class="media media-center gx-3 wide-xs">
+                                <div class="media-object"><em class="icon icon-circle icon-circle-lg ni ni-user"></em></div>
+                                <div class="media-content"><p>Accédez à vos informations de paiement et consultez vos factures.</p></div>
+                            </div>
+                            <div class="nk-block-actions flex-shrink-0"><a href="{{ path('app_admin_subscription_portal') }}" class="btn btn-lg btn-primary">Accéder</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col">
+            <h6>Tarifications</h6>
+            <div class="row">
+                <div class="col-md-4 col-xxl-3 mb-2">
+                    <div class="card card-bordered pricing recommend text-center">
+                        <div class="pricing-body">
+                            <div class="pricing-title w-220px mx-auto">
+                                <h5 class="title">Gratuit</h5>
+                                <span class="sub-text">Si vous voulez simplement tester l'application</span>
+                            </div>
+                            <div class="pricing-amount">
+                                <div class="amount">0€ <span>/mois</span></div>
+                                <span class="bill">1 Client, 10 Publications</span></div>
+                            <div class="pricing-action">
+                                {% if subscription is defined and subscription.getType() == 'free' %}
+                                    <a href="#" class="btn btn-secondary disabled">Plan actuel</a>
+                                {% else %}
+                                    <small>Pour repasser en plan gratuit merci de contacter le support</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xxl-3 mb-2">
+                    <div class="card card-bordered pricing recommend text-center"><span class="pricing-badge badge bg-primary">Recommandé</span>
+                        <div class="pricing-body">
+                            <div class="pricing-title w-220px mx-auto"><h5 class="title">Avancé</h5>
+                                <span class="sub-text">Pour les freelances et petites entreprises.</span>
+                            </div>
+                            <div class="pricing-amount">
+                                <div class="amount">4,79€ <span>/mois</span></div>
+                                <span class="bill">10 Clients, 200 Publications</span></div>
+                            <div class="pricing-action">
+                                {% if subscription is defined and subscription.getType() == 'avance' %}
+                                    <a href="#" class="btn btn-secondary disabled">Plan actuel</a>
+                                {% else %}
+                                    <a href="{{ path('app_admin_subscription_upgrade') }}" class="btn btn-primary">Choisir ce plan</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xxl-3 mb-2">
+                    <div class="card card-bordered pricing recommend text-center">
+                        <div class="pricing-body">
+                            <div class="pricing-title w-220px mx-auto"><h5 class="title">Entreprise</h5>
+                                <span class="sub-text">Pour une utilisation collaborative</span>
+                            </div>
+                            <div class="pricing-amount">
+                                <div class="amount">Sur-mesure</div>
+                                <span class="bill">S'adaptera à vos besoin. White label possible. Plusieurs utilisateurs</span></div>
+                            <div class="pricing-action">
+                                {% if subscription is defined and subscription.getType() == 'entreprise' %}
+                                    <a href="#" class="btn btn-secondary disabled">Plan actuel</a>
+                                {% else %}
+                                    <small>Pour activer l'offre entreprise, merci de contacter le support</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

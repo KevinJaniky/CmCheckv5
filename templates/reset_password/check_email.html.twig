@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé{% endblock %}
+
+{% block body %}
+    <div class="nk-content ">
+        <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
+            <div class="card">
+                <div class="card-inner card-inner-lg">
+                    <p>
+                        Si un compte correspondant à votre adresse e-mail existe, un e-mail vient d'être envoyé contenant un lien que vous pouvez
+                        utiliser pour réinitialiser votre mot de passe. Ce lien expirera dans
+                        {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+                    </p>
+                    <p>Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier de courriers indésirables ou <a
+                                href="{{ path('app_forgot_password_request') }}">réessayer</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

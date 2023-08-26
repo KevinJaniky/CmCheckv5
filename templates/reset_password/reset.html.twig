@@ -1,0 +1,21 @@
+{% extends 'without_sidebar.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+    <div class="nk-content ">
+        <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
+            <div class="card">
+                <div class="card-inner card-inner-lg">
+                    <div class="nk-block-head">
+                        <div class="nk-block-head-content"><h4 class="nk-block-title">Réinitialiser votre mot de passe</h4></div>
+                    </div>
+                    {{ form_start(resetForm) }}
+                    {{ form_row(resetForm.plainPassword) }}
+                    <button class="btn btn-primary mt-3">Réinitialiser mon mot de passe</button>
+                    {{ form_end(resetForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

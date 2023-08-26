@@ -1,0 +1,108 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Cmcheck{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Tableau de bord</h3>
+                <div class="nk-block-des text-soft">
+                    <nav style="margin-left: 2px">
+                        <ul class="breadcrumb breadcrumb-arrow">
+                            <li class="breadcrumb-item active">Tableau de bord</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-0">
+        <div class="row">
+            <div class="col-md-4 col-12 mb-2">
+                <div class="card card-bordered">
+                    <div class="nk-ecwg nk-ecwg6">
+                        <div class="card-inner">
+                            <div class="card-title-group">
+                                <div class="card-title"><h6 class="title">Nombre de client</h6></div>
+                            </div>
+                            <div class="data">
+                                <div class="data-group">
+                                    <div class="amount">{{ nbClient }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-12 mb-2">
+                <div class="card card-bordered">
+                    <div class="nk-ecwg nk-ecwg6">
+                        <div class="card-inner">
+                            <div class="card-title-group">
+                                <div class="card-title"><h6 class="title">Nombre de publication</h6></div>
+                            </div>
+                            <div class="data">
+                                <div class="data-group">
+                                    <div class="amount">{{ nbPublication }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-12 mb-2">
+                <div class="card card-bordered">
+                    <div class="nk-ecwg nk-ecwg6">
+                        <div class="card-inner">
+                            <div class="card-title-group">
+                                <div class="card-title"><h6 class="title">Publication à retravailler</h6></div>
+                            </div>
+                            <div class="data">
+                                <div class="data-group">
+                                    <div class="amount">{{ nbPublicationToRework }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12 col-xxl-8">
+                <div class="card card-bordered h-100">
+                    <div class="card-inner border-bottom">
+                        <div class="card-title-group">
+                            <div class="card-title"><h6 class="title">Actions récentes</h6></div>
+                        </div>
+                    </div>
+                    <div class="card-inner" style="overflow-y: scroll;height: 270px;">
+                        <div class="timeline">
+                            <ul class="timeline-list">
+                                {% if logs is defined %}
+                                    {% for log in logs %}
+                                        <li class="timeline-item">
+                                            <div class="timeline-status bg-primary"></div>
+                                            <div class="timeline-date">{{ log.getCreatedAt().format('d/m/Y') }}
+                                                <br>{{ log.getCreatedAt().format('H:i') }}
+                                            </div>
+                                            <div class="timeline-data"><h6 class="timeline-title mb-0">{{ log.getMessage() }}</h6>
+                                                <div class="timeline-des">
+                                                    <p>
+                                                        <a href="{{ path('app_admin_publication_edit',{id: log.getPublication().getId()}) }}">Voir la publication</a>
+                                                    </p>
+                                                    <span class="time"></span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

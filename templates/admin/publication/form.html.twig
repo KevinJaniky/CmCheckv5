@@ -1,0 +1,212 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Cmcheck{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Publication</h3>
+                <div class="nk-block-des text-soft">
+                    <nav style="margin-left: 2px">
+                        <ul class="breadcrumb breadcrumb-arrow">
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_home') }}">Tableau de bord</a></li>
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_publication') }}">Publication</a></li>
+                            <li class="breadcrumb-item active">{% if publication is defined %} Modifier {% else %} Ajouter {% endif %}</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="nk-block-head-content">
+            </div>
+        </div>
+    </div>
+    <div class="container p-0">
+        <div class="row">
+            <div class="col-sm-12 {% if create is defined and create == true %}col-md-12{% else %}col-md-8{% endif %}">
+                <div class="card card-bordered p-3">
+                    <div class="card-inner">
+                        <form action="" method="post" enctype="multipart/form-data" id="publication_info"
+                              {% if publication is defined %}data-auto-save="{{ path('app_admin_publication_auto_save',{id:publication.getId()}) }}{% endif %}">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="client" class="form-label">Clients</label>
+                                        <select name="client" data-search="on" required id="client" class="form-select js-select2">
+                                            {% if clients is defined %}
+                                                {% for client in clients %}
+                                                    <option value="{{ client.getId() }}"
+                                                            {% if publication is defined and publication.getClient().getId() == client.getId() %}selected{% endif %}
+                                                    >{{ client.getSociete() }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="social" class="form-label">Support de publication</label>
+                                        <select name="social" data-search="on" required id="social" class="form-select js-select2">
+                                            {% for social in ['facebook','instagram','x','linkedin','pinterest'] %}
+                                                <option value="{{ social }}"
+                                                        {% if publication is defined and publication.getSocial() == social %}selected{% endif %}
+                                                >{{ social[:1]|upper }}{{ social[1:] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group"><label class="form-label">Date de publication</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" name="publish_at" required class="form-control date-picker"
+                                                   data-date-format="dd/mm/yyyy"
+                                                   value="{% if publication is defined %}{{ publication.getPublishedAt().format('d/m/Y') }}{% endif %}"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group"><label class="form-label">Heure de publication</label>
+                                        <div class="form-control-wrap">
+                                            <input data-time-format="H:mm" name="publish_hour" type="text" required
+                                                   class="form-control time-picker"
+                                                   value="{% if publication is defined %}{{ publication.getPublishedAt().format('H:i') }}{% endif %}"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if create is defined and create == true %}
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <button class="btn btn-primary btn-sm btn-dim justify-content-center" name="submit_type" value="draft"
+                                                type="submit">Continuer
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if create is not defined or create is empty %}
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <label for="media" class="form-label">Media (vous pouvez en ajouter plusieurs)</label>
+                                        <input name="media[]" id="media" type="file" multiple class="form-control" accept="image/*,video/*">
+                                        {% if publication is defined and publication.getMedia()|length > 0 %}
+                                            {% for media in publication.getMedia() %}
+                                                {% if isVideoOrImage(absolute_url(asset('uploads/'~publication.getClient().getId()~'/'~media))) == 'image' %}
+                                                    <a target="_blank" href="{{ asset('uploads/'~publication.getClient().getId()~'/'~media) }}">
+                                                        <img src="{{ asset('uploads/'~publication.getClient().getId()~'/'~media) }}" class="me-1 mt-1"
+                                                             style="width:50px;height:50px">
+                                                    </a>
+                                                {% elseif isVideoOrImage(absolute_url(asset('uploads/'~publication.getClient().getId()~'/'~media))) == 'video' %}
+                                                    <a target="_blank" href="{{ asset('uploads/'~publication.getClient().getId()~'/'~media) }}">
+                                                        Voir la video
+                                                    </a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <label for="content" class="form-label">Contenu</label>
+                                        <textarea name="content" id="content"
+                                                  class="form-control">{% if publication is defined %}{{ publication.getContent() }}{% endif %}</textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="form-label">Sauvergarder et</div>
+                                    <div class="btn-group" aria-label="Basic example">
+                                        <button class="btn btn-secondary btn-sm btn-dim justify-content-center" name="submit_type" value="draft"
+                                                type="submit">Marquer comme brouillon
+                                        </button>
+                                        <button class="btn btn-primary btn-sm btn-dim justify-content-center" name="submit_type" value="check"
+                                                type="submit">Marquer pour validation
+                                        </button>
+                                        <button class="btn btn-success btn-sm btn-dim justify-content-center" name="submit_type" value="validate"
+                                                type="submit">Valider automatiquement
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% if create is not defined or create is empty %}
+                <div class="col-sm-12 mt-sm-2 mt-md-0 col-md-4">
+                    <div class="card card-bordered p-3">
+                        <div class="card-inner">
+                            <div class="preview-title overline-title">Commentaires</div>
+                            <div class="content">
+                                <div class="simplebar-content">
+                                    {% if commentaires is not empty %}
+                                        {% for commentaire in commentaires %}
+                                            <div class="chat is-me">
+                                                <div class="chat-content">
+                                                    <div class="chat-bubbles">
+                                                        <div class="chat-bubble">
+                                                            <div class="chat-msg">{{ commentaire.getComment() }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <ul class="chat-meta">
+                                                        <li>{{ commentaire.getCreatedAt().format('d/m/Y H:i') }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+            crossorigin="anonymous"></script>
+    <script src="{{ asset('/theme/assets/js/libs/editors/tinymce.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            tinymce.init({
+                force_br_newlines: true,
+                force_p_newlines: false,
+                forced_root_block: false,
+                selector: 'textarea#content',
+                menubar: false,
+                plugins: 'emoticons,lists',
+                toolbar: 'undo redo | bold italic | bullist numlist | emoticons',
+            });
+
+            let save = () => {
+                let saveUrl = $('#publication_info').data('auto-save');
+                console.log(saveUrl);
+                if (saveUrl) {
+                    let data = {
+                        content: tinyMCE.get('content').getContent()
+                    };
+                    $.ajax({
+                        url: saveUrl,
+                        method: 'post',
+                        data: data,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data !== undefined && data.error === false) {
+                            }
+                        }
+                    })
+                }
+            };
+
+            setInterval(save, 10000);
+        });
+    </script>
+
+{% endblock %}

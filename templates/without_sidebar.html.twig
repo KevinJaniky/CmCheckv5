@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Connexion{% endblock %}</title>
+    <link rel="icon" href="{{ asset('favicon.png') }}">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" href="{{ asset('/theme/assets/css/dashlite.css') }}">
+        <link id="skin-default" rel="stylesheet" href="{{ asset('/theme/assets/css/skins/theme-purple.css') }}">
+    {% endblock %}
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body>
+<div class="nk-main">
+    <div class="nk-wrap">
+        <div class="nk-header is-light nk-header-fixed">
+            <div class="container-fluid">
+                <div class="nk-header-wrap">
+                    <div class="nk-menu-trigger me-sm-2 d-lg-none">
+                        <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="headerNav">
+                            <em class="icon ni ni-menu"></em>
+                        </a>
+                    </div>
+                    <div class="nk-header-brand">
+                        <a href="{{ path('app_admin_client') }}" class="logo-link">
+                            <img class="logo-light logo-img" src="{{ asset('logo.png') }}" alt="logo">
+                            <img class="logo-dark logo-img" src="{{ asset('logo.png') }}" alt="logo-dark">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 85px">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% extends 'without_sidebar.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block body %}
+    <div class="nk-content ">
+        <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
+            <div class="card">
+                <div class="card-inner card-inner-lg">
+                    {% for flash_error in app.flashes('reset_password_error') %}
+                        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                    {% endfor %}
+                    <div class="nk-block-head">
+                        <div class="nk-block-head-content"><h4 class="nk-block-title">Réinitialiser votre mot de passe</h4></div>
+                    </div>
+                    {{ form_start(requestForm) }}
+                    {{ form_row(requestForm.email,{
+                        'label': 'Email',
+                        'attr': {
+                            'class': 'form-control'
+                        },
+                        'label_attr': {
+                            'class': 'form-label'
+                        }
+                    }) }}
+                    <button class="btn btn-primary mt-3">Envoyer un mail de réinitialisation</button>
+                    {{ form_end(requestForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

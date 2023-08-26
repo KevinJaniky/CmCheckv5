@@ -1,0 +1,75 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Cmcheck{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Clients</h3>
+                <div class="nk-block-des text-soft">
+                    <nav style="margin-left: 2px">
+                        <ul class="breadcrumb breadcrumb-arrow">
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_home') }}">Tableau de bord</a></li>
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_client') }}">Clients</a></li>
+                            <li class="breadcrumb-item active">{% if client is defined %} Modifier {% else %} Ajouter {% endif %}</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="nk-block-head-content">
+            </div>
+        </div>
+    </div>
+    <div class="container p-0">
+        <div class="card card-bordered p-3">
+            <div class="card-inner">
+                <form action="" method="post">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="societe" class="form-label">Societe</label>
+                                <input type="text" class="form-control" name="societe" id="societe" required
+                                       value="{% if client is defined %}{{ client.getSociete() }}{% endif %}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="email" required
+                                       value="{% if client is defined %}{{ client.getEmail() }}{% endif %}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="lastname" class="form-label">Nom du contact</label>
+                                <input type="text" class="form-control" name="nom" id="lastname" required
+                                       value="{% if client is defined %}{{ client.getNom() }}{% endif %}">
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if client is defined %}
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="form-group">
+                                <label  class="form-label">Lien de l'interface utilisateur</label>
+                                <input type="text" class="form-control" value="{{ absolute_url(path('app_public',{token:client.getToken()})) }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col text-end">
+                            <button class="btn btn-primary btn-sm mt-3" type="submit">Sauvegarder</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

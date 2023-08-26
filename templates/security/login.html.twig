@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Connexion{% endblock %}</title>
+    <link rel="icon" href="{{ asset('favicon.png') }}">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" href="{{ asset('/theme/assets/css/dashlite.css') }}">
+        <link id="skin-default" rel="stylesheet" href="{{ asset('/theme/assets/css/skins/theme-purple.css') }}">
+    {% endblock %}
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body>
+<div class="nk-main">
+    <div class="nk-wrap">
+        <div class="nk-header is-light nk-header-fixed">
+            <div class="container-fluid">
+                <div class="nk-header-wrap">
+                    <div class="nk-menu-trigger me-sm-2 d-lg-none">
+                        <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="headerNav">
+                            <em class="icon ni ni-menu"></em>
+                        </a>
+                    </div>
+                    <div class="nk-header-brand">
+                        <a href="{{ path('app_admin_client') }}" class="logo-link">
+                            <img class="logo-light logo-img" src="{{ asset('logo.png') }}" alt="logo">
+                            <img class="logo-dark logo-img" src="{{ asset('logo.png') }}" alt="logo-dark">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 85px">
+            <div class="nk-content ">
+                <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
+                    <div class="card">
+                        <div class="card-inner card-inner-lg">
+                            {% if error %}
+                                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            {% endif %}
+                            <div class="nk-block-head">
+                                <div class="nk-block-head-content"><h4 class="nk-block-title">Se connecter</h4></div>
+                            </div>
+                            <form method="post">
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <label class="form-label" for="default-01">Email</label>
+                                    </div>
+                                    <div class="form-control-wrap">
+                                        <input type="email" value="{{ last_username }}" autocomplete="email" name="email" class="form-control form-control-lg" id="default-01" placeholder="Entrez votre adresse mail">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <label class="form-label" for="password">Mot de passe</label>
+                                        <a class="link link-primary link-sm" href="{{ path('app_forgot_password_request') }}">Vous avez oubliez votre mot de passe ?</a>
+                                    </div>
+                                    <div class="form-control-wrap">
+                                        <input type="password" name="password" class="form-control form-control-lg" id="password" placeholder="Entrez votre mot de passe">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-lg btn-primary btn-block">Connexion</button>
+                                </div>
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            </form>
+                            <div class="form-note-s2 text-center pt-4"> Vous n'avez pas encore de compte ?
+                                <a href="{{  path('app_register') }}">Crée un compte</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
