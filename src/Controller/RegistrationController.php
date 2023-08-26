@@ -42,6 +42,8 @@ class RegistrationController extends AbstractController
             $subscription->setUser($user);
             $subscription->setType('free');
             $subscription->setWorkspace($workspace);
+            $subscription->setNbClient(1);
+            $subscription->setNbPublication(10);
 
             $entityManager->persist($subscription);
             $entityManager->flush();
