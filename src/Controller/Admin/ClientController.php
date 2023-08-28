@@ -118,14 +118,3 @@ class ClientController extends AbstractController
     }
 }
 
-/*
-mdp :
-janiky39
-
-Admin email
-Docusign c'est chez qui ?
-Les enregistrement dns de cloudflare ?
-Ou sont gérer les mails ?  solution mxroute.
-
-*/
-

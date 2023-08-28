@@ -20,7 +20,7 @@ class StripeService {
         $checkout_session = \Stripe\Checkout\Session::create([
             'line_items' => [
                 [
-                    'price' => 'price_1NjKoHHsBneQwXNdUhtxPvs7',
+                    'price' => 'price_1NkE22HsBneQwXNdSu7jZVHR',
                     'quantity' => 1,
                 ]
             ],

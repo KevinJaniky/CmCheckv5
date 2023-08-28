@@ -8,10 +8,12 @@ use App\Entity\Publication;
 use App\Service\CustomerSecurityService;
 use App\Service\StateService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/customer_portal/public')]
@@ -31,7 +33,6 @@ class PublicController extends AbstractController
         ], [
             'publishedAt' => 'DESC'
         ]);
-
 
         return $this->render('public/index.html.twig', [
             'publications' => $publications,
@@ -66,7 +67,7 @@ class PublicController extends AbstractController
     }
 
     #[Route('/{token}/action/{id}', name: 'app_public_action')]
-    public function action($token, Publication $publication, Request $request, CustomerSecurityService $customerSecurityService, EntityManagerInterface $entityManager): JsonResponse
+    public function action($token, Publication $publication, Request $request, CustomerSecurityService $customerSecurityService, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
     {
         $client = $customerSecurityService->checkAccess($token);
         if (empty($client)) {
@@ -102,6 +103,28 @@ class PublicController extends AbstractController
         $entityManager->persist($logAction);
 
         $entityManager->flush();
+
+
+        $publicationCount = $entityManager->getRepository(Publication::class)->count([
+            'client' => $client,
+            'state' => 'check'
+        ]);
+
+        if($publicationCount == 0){
+            $email = (new TemplatedEmail())
+                ->from('community@cmcheck.fr')
+                ->to($client->getWorkspace()->getUsers()[0]->getEmail())
+                ->subject('AtomikCMCheck - ' . $client->getNom() . ' a validé toutes ses publications pour la sociéte ' . $client->getSociete())
+                ->htmlTemplate('email/client_had_validate.html.twig')
+                ->context([
+                    'host' => 'https://' . $_SERVER['HTTP_HOST'] . '/',
+                    'clientName' => $client->getSociete()
+                ]);
+            $mailer->send($email);
+        }
+
+
+
 
         return $this->json([
             'success' => true

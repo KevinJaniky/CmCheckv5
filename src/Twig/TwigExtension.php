@@ -16,6 +16,7 @@ class TwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction("isVideoOrImage", $this->isVideoOrImage(...)),
+            new TwigFunction("orderMedia", $this->orderMedia(...)),
         ];
     }
 
@@ -38,6 +39,11 @@ class TwigExtension extends AbstractExtension
             return 'video';
         }
         return 'other';
+    }
+    private function orderMedia(array $mediasName): array
+    {
+        sort($mediasName);
+        return $mediasName;
     }
 
 

@@ -23,8 +23,11 @@ class  FileUploaderService
     public function uploadFile($file, Client $client): string
     {
         $directory = $this->directoryClient($client);
-        $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-        $file->move($directory, $fileName);
+
+        //get the original file name
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $fileName = $originalFilename.'-'.md5(uniqid()) . '.' . $file->guessExtension();
+        $file->move($directory,$fileName);
         return $fileName;
     }
 
