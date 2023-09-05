@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="icon" href="{{ asset('favicon.png') }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
         <link rel="stylesheet" href="{{ asset('/theme/assets/css/dashlite.css') }}">
