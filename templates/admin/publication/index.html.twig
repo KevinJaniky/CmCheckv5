@@ -121,7 +121,7 @@
                                 <td class="align-middle">{{ publication.getSummary()|slice(0,25) }}</td>
                                 <td>
                                     {% if publication.getMedia() is defined and publication.getMedia()|length > 0 %}
-                                        <div style="width: 35px;height: 35px;object-fit: cover">
+                                        <div style="width: 35px;height: 35px;object-fit: cover;    overflow: hidden;">
                                             <img src="{{ asset('uploads/'~publication.getClient().getId()~'/'~publication.getMedia()[0]) }}" alt="">
                                         </div>
                                     {% endif %}
