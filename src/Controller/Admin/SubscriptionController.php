@@ -68,6 +68,8 @@ class SubscriptionController extends AbstractController
 
         $subscription->setType('avance');
         $subscription->setCustomerId($customerId);
+        $subscription->setNbClient(10);
+        $subscription->setNbPublication(200);
 
         $entityManager->persist($subscription);
         $entityManager->flush();
