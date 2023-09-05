@@ -2,11 +2,18 @@
 
 namespace App\Twig;
 
+use App\Entity\Subscription;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension
 {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
     public function getFilters(): array
     {
         return [];
@@ -17,6 +24,7 @@ class TwigExtension extends AbstractExtension
         return [
             new TwigFunction("isVideoOrImage", $this->isVideoOrImage(...)),
             new TwigFunction("orderMedia", $this->orderMedia(...)),
+            new TwigFunction("isPaidUser", $this->isPaidUser(...)),
         ];
     }
 
@@ -44,6 +52,15 @@ class TwigExtension extends AbstractExtension
     {
         sort($mediasName);
         return $mediasName;
+    }
+    private function isPaidUser(User $user): bool
+    {
+        $workspace = $user->getWorkspace();
+        $subscription = $this->entityManager->getRepository(Subscription::class)->findOneBy(['workspace' => $workspace]);
+        if($subscription){
+            return $subscription->getType() !== 'free';
+        }
+        return false;
     }
 
 
