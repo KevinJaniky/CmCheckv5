@@ -8,7 +8,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class  FileUploaderService
 {
 
-    public function __construct(private string $uploadsDirectory, private SluggerInterface $slugger)
+    public function __construct(private string $uploadsDirectory)
     {
     }
 
@@ -27,7 +27,7 @@ class  FileUploaderService
 
         //get the original file name
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $fileName = $this->slugger->slug($originalFilename).'-'.md5(uniqid()) . '.' . $file->guessExtension();
+        $fileName =($originalFilename).'-'.md5(uniqid()) . '.' . $file->guessExtension();
         $file->move($directory,$fileName);
         return $fileName;
     }
