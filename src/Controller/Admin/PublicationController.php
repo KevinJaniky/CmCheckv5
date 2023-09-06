@@ -123,6 +123,10 @@ class PublicationController extends AbstractController
             throw new AccessDeniedException();
         }
 
+        $commentaires = $entityManager->getRepository(Commentaire::class)->findBy(['publication' => $publication]);
+        foreach ($commentaires as $commentaire) {
+            $entityManager->remove($commentaire);
+        }
         $entityManager->remove($publication);
         $entityManager->flush();
 
@@ -165,6 +169,10 @@ class PublicationController extends AbstractController
             $publication = $entityManager->getRepository(Publication::class)->find($id);
             if ($publication->getClient()->getWorkspace() != $user->getWorkspace()) {
                 throw new AccessDeniedException();
+            }
+            $commentaires = $entityManager->getRepository(Commentaire::class)->findBy(['publication' => $publication]);
+            foreach ($commentaires as $commentaire) {
+                $entityManager->remove($commentaire);
             }
             $entityManager->remove($publication);
         }
