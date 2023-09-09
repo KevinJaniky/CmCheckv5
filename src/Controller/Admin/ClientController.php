@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Client;
+use App\Entity\Commentaire;
+use App\Entity\Publication;
 use App\Entity\Subscription;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -87,6 +89,15 @@ class ClientController extends AbstractController
         }
 
         //TODO : Supprimer Toutes les publications
+
+        $publications = $entityManager->getRepository(Publication::class)->findBy(['client' => $client]);
+        foreach ($publications as $publication){
+            $commentaires = $entityManager->getRepository(Commentaire::class)->findBy(['publication' => $publication]);
+            foreach ($commentaires as $commentaire){
+                $entityManager->remove($commentaire);
+            }
+            $entityManager->remove($publication);
+        }
 
         $entityManager->remove($client);
         $entityManager->flush();
