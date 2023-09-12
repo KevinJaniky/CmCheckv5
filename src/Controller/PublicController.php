@@ -92,6 +92,28 @@ class PublicController extends AbstractController
         ]);
     }
 
+    #[Route('/publication/{id}', name: 'app_public_only_one')]
+    public function onlyOne($id, Request $request, CustomerSecurityService $customerSecurityService, EntityManagerInterface $entityManager): Response
+    {
+        $client = $customerSecurityService->checkAccess($request->query->get('token'));
+        if (empty($client)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $publications = $entityManager->getRepository(Publication::class)->findBy([
+            'client' => $client,
+            'id' => $id
+        ], [
+            'publishedAt' => 'DESC'
+        ]);
+
+        return $this->render('public/index.html.twig', [
+            'publications' => $publications,
+            'client' => $client,
+            'page' => 'all'
+        ]);
+    }
+
     #[Route('/{token}/action/{id}', name: 'app_public_action')]
     public function action($token, Publication $publication, Request $request, CustomerSecurityService $customerSecurityService, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
     {

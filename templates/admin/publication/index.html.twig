@@ -140,6 +140,8 @@
                                 </td>
                                 <td class="align-middle" data-sort="{{ publication.getPublishedAt().format('Ymd') }}">{{ publication.getPublishedAt().format('d/m/Y H:i') }}</td>
                                 <td class="d-flex">
+                                    <a href="{{ path('app_public_only_one',{id: publication.getId(),token: publication.getClient().getToken()}) }}"
+                                       class="btn btn-sm btn-dim btn-primary me-1" target="_blank">Voir la publication</a>
                                     <a href="{{ path('app_admin_publication_edit',{id: publication.getId()}) }}"
                                        class="btn btn-sm btn-dim btn-warning me-1">Modifier</a>
                                     <a href="" class="btn btn-sm btn-dim btn-danger" data-bs-toggle="modal"
