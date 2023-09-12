@@ -93,7 +93,7 @@ class PublicationController extends AbstractController
             $publication->setSocial($request->request->get('social'));
 
             $text = strip_tags($request->request->get('content'));
-            $content = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text );
+            $content = preg_replace("/&#?[a-z0-9]{2,8}(;)?/i","",html_entity_decode($text) );
             $publication->setSummary($content);
 
             if(!empty($request->files->get('media'))){
@@ -144,7 +144,7 @@ class PublicationController extends AbstractController
 
         $publication->setContent($request->request->get('content'));
         $text = strip_tags($request->request->get('content'));
-        $content = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text );
+        $content = preg_replace("/&#?[a-z0-9]{2,8}(;)?/i","",html_entity_decode($text) );
         $publication->setSummary($content);
 
         $entityManager->persist($publication);
