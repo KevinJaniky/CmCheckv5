@@ -70,6 +70,12 @@
                                     <span class="nk-menu-text">Contenu à valider</span>
                                 </a>
                             </li>
+                            <li class="nk-menu-item {% if app.request.get('_route') == 'app_public_validated' %}active{% endif %}">
+                                <a href="{{ path('app_public_validated',{token: app.request.query.get('token')} ) }}"
+                                   class="nk-menu-link">
+                                    <span class="nk-menu-text">Contenu validé</span>
+                                </a>
+                            </li>
                             <li class="nk-menu-item {% if app.request.get('_route') == 'app_public_all' %}active{% endif %}">
                                 <a href="{{ path('app_public_all',{token: app.request.query.get('token')} ) }}"
                                    class="nk-menu-link">
