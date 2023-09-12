@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Client;
 use App\Entity\Commentaire;
+use App\Entity\Log;
 use App\Entity\Publication;
 use App\Entity\Subscription;
 use App\Service\FileUploaderService;
@@ -105,6 +106,11 @@ class PublicationController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'La publication a bien été sauvegardée');
+
+            if(!empty($request->query->get('back')) && $request->query->get('back') == 'client'){
+                return $this->redirectToRoute('app_admin_client_show',['id' => $publication->getClient()->getId()]);
+            }
+
             return $this->redirectToRoute('app_admin_publication');
         }
 
@@ -127,10 +133,27 @@ class PublicationController extends AbstractController
         foreach ($commentaires as $commentaire) {
             $entityManager->remove($commentaire);
         }
+
+        $logs = $entityManager->getRepository(Log::class)->findBy([
+            'publication' => $publication
+        ]);
+
+        foreach ($logs as $log){
+            $entityManager->remove($log);
+        }
+
+
+        $client = $publication->getClient();
         $entityManager->remove($publication);
         $entityManager->flush();
 
         $this->addFlash('success', 'La publication a bien été supprimée');
+
+        if(!empty($request->query->get('back')) && $request->query->get('back') == 'client'){
+            return $this->redirectToRoute('app_admin_client_show',['id' => $client->getId()]);
+        }
+
+
         return $this->redirectToRoute('app_admin_publication');
     }
 

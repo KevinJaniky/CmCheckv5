@@ -35,7 +35,7 @@
                                         <select name="client" data-search="on" required id="client" class="form-select js-select2">
                                             {% if clients is defined %}
                                                 {% for client in clients %}
-                                                    <option value="{{ client.getId() }}"
+                                                    <option value="{{ client.getId() }}" {% if app.request.query.get('client') is defined and app.request.query.get('client') is not empty and app.request.query.get('client') == client.getId() %}selected{% endif %}
                                                             {% if publication is defined and publication.getClient().getId() == client.getId() %}selected{% endif %}
                                                     >{{ client.getSociete() }}</option>
                                                 {% endfor %}

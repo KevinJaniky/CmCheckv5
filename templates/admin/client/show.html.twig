@@ -1,0 +1,166 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Cmcheck{% endblock %}
+
+{% block body %}
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Clients</h3>
+                <div class="nk-block-des text-soft">
+                    <nav style="margin-left: 2px">
+                        <ul class="breadcrumb breadcrumb-arrow">
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_home') }}">Tableau de bord</a></li>
+                            <li class="breadcrumb-item"><a href="{{ path('app_admin_client') }}">Clients</a></li>
+                            <li class="breadcrumb-item active">{% if client is defined %} Modifier {% else %} Ajouter {% endif %}</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="nk-block-head-content">
+            </div>
+        </div>
+    </div>
+    <div class="card card-bordered mb-2">
+        <div class="card-inner p-2">
+            <a href="{{ path('app_admin_client_notify',{id: client.getId()}) }}"
+               class="btn btn-sm btn-warning btn-dim me-1">Notifier le client</a>
+            <a href="{{ path('app_admin_publication_create',{client: client.getId()}) }}"
+               class="btn btn-sm btn-primary btn-dim">Créer une nouvelle publication</a>
+        </div>
+    </div>
+    <div class="container p-0">
+        <div class="card card-bordered p-3">
+            <div class="card-inner">
+                <form action="" method="post">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="societe" class="form-label">Societe</label>
+                                <input type="text" class="form-control" name="societe" id="societe" required
+                                       value="{% if client is defined %}{{ client.getSociete() }}{% endif %}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="email" required
+                                       value="{% if client is defined %}{{ client.getEmail() }}{% endif %}" disabled>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="lastname" class="form-label">Nom du contact</label>
+                                <input type="text" class="form-control" name="nom" id="lastname" required
+                                       value="{% if client is defined %}{{ client.getNom() }}{% endif %}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    {% if client is defined %}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label">Lien de l'interface utilisateur</label>
+                                    <input type="text" class="form-control" value="{{ absolute_url(path('app_public',{token:client.getToken()})) }}"
+                                           disabled>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-0 mt-2">
+        <div class="card card-bordered p-3">
+            <div class="card-inner">
+                <div class="container p-0">
+                    <table id="client" class="table datatable-init-custom" data-export-title="Supprimer en masse" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th data-priority="1">Client</th>
+                            <th>Contenu</th>
+                            <th>Media</th>
+                            <th data-priority="4">Réseaux social</th>
+                            <th data-priority="3">Status</th>
+                            <th data-priority="5">A publié le</th>
+                            <th data-priority="2"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if publications is defined %}
+                            {% for publication in publications %}
+                                <tr data-rowId="{{ publication.getId() }}">
+                                    <td class="align-middle"></td>
+                                    <td class="align-middle">{{ publication.getClient().getSociete() }}</td>
+                                    <td class="align-middle">{{ publication.getSummary()|slice(0,25) }}</td>
+                                    <td>
+                                        {% if publication.getMedia() is defined and publication.getMedia()|length > 0 %}
+                                            <div style="width: 35px;height: 35px;object-fit: cover;    overflow: hidden;">
+                                                <img src="{{ asset('uploads/'~publication.getClient().getId()~'/'~publication.getMedia()[0]) }}"
+                                                     alt="">
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle">{{ publication.getSocial()[:1]|upper }}{{ publication.getSocial()[1:] }}</td>
+                                    <td class="align-middle">
+                                        {% if publication.getState() == 'draft' %}
+                                            <span class="badge badge-dim bg-outline-primary">Brouillon</span>
+                                        {% elseif publication.getState() == 'check' %}
+                                            <span class="badge badge-dim bg-outline-warning">En attente de validation</span>
+                                        {% elseif publication.getState() == 'rework' %}
+                                            <span class="badge badge-dim bg-outline-danger">A retravailler</span>
+                                        {% elseif publication.getState() == 'validate' %}
+                                            <span class="badge badge-dim bg-outline-success">Validé</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle"
+                                        data-sort="{{ publication.getPublishedAt().format('Ymd') }}">{{ publication.getPublishedAt().format('d/m/Y H:i') }}</td>
+                                    <td class="d-flex">
+                                        <a href="{{ path('app_public_only_one',{id: publication.getId(),token: publication.getClient().getToken()}) }}"
+                                           class="btn btn-sm btn-dim btn-primary me-1" target="_blank">Voir la publication</a>
+                                        <a href="{{ path('app_admin_publication_edit',{id: publication.getId(), back: 'client'}) }}"
+                                           class="btn btn-sm btn-dim btn-warning me-1">Modifier</a>
+                                        <a href="" class="btn btn-sm btn-dim btn-danger" data-bs-toggle="modal"
+                                           data-bs-target="#modalSmall{{ publication.getId() }}">Supprimer</a>
+                                        <div class="modal fade" tabindex="-1" id="modalSmall{{ publication.getId() }}" aria-modal="true"
+                                             role="dialog">
+                                            <div class="modal-dialog modal-sm" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Suppression</h5>
+                                                        <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <em class="icon ni ni-cross"></em>
+                                                        </a>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>La suppression est irréversible. Êtes-vous vraiment sûr de vouloir supprimer cette
+                                                            publication
+                                                            ?</p>
+                                                    </div>
+                                                    <div class="modal-footer bg-light">
+                                                        <a href="#" class=" btn btn-gray btn-sm" data-bs-dismiss="modal"
+                                                           aria-label="Close">Annuler</a>
+                                                        <a href="{{ path('app_admin_publication_delete',{id:publication.getId(), back: 'client'}) }}"
+                                                           class="btn btn-danger btn-sm">Continuer & Supprimer</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -42,29 +42,32 @@
                                 <td>{{ client.getNom() }}</td>
                                 <td>{{ client.getEmail() }}</td>
                                 <td>
-                                    <a href="{{ path('app_admin_client_notify',{id: client.getId()}) }}"
-                                       class="btn btn-sm btn-primary btn-dim">Notifier le client</a>
+                                    <a href="{{ path('app_admin_client_show',{id: client.getId()}) }}"
+                                       class="btn btn-sm btn-primary btn-dim">Profile</a>
+
                                     <a href="{{ path('app_admin_client_edit',{id: client.getId()}) }}"
                                        class="btn btn-sm btn-warning btn-dim">Modifier</a>
-                                    <a href="#" class="btn btn-sm btn-danger btn-dim" data-bs-toggle="modal" data-bs-target="#modalSmall{{ client.getId() }}">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-danger btn-dim" data-bs-toggle="modal"
+                                       data-bs-target="#modalSmall{{ client.getId() }}">Supprimer</a>
 
                                     <div class="modal fade" tabindex="-1" id="modalSmall{{ client.getId() }}" aria-modal="true" role="dialog"
-                                        >
+                                    >
                                         <div class="modal-dialog modal-sm" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">Suppression</h5>
-                                                    <a href="#" class="close" data-bs-dismiss="modal"aria-label="Close">
+                                                    <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                         <em class="icon ni ni-cross"></em>
                                                     </a>
                                                 </div>
                                                 <div class="modal-body">
                                                     <p>La suppression est irréversible. Êtes-vous vraiment sûr de vouloir supprimer ce client ?
-                                                    Vous perdrez tout le contenu en lien.</p>
+                                                        Vous perdrez tout le contenu en lien.</p>
                                                 </div>
                                                 <div class="modal-footer bg-light">
                                                     <a href="#" class=" btn btn-gray btn-sm" data-bs-dismiss="modal" aria-label="Close">Annuler</a>
-                                                    <a href="{{ path('app_admin_client_delete',{id:client.getId()}) }}" class="btn btn-danger btn-sm">Continuer & Supprimer</a>
+                                                    <a href="{{ path('app_admin_client_delete',{id:client.getId()}) }}" class="btn btn-danger btn-sm">Continuer
+                                                        & Supprimer</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -78,4 +81,6 @@
             </div>
         </div>
     </div>
+
+
 {% endblock %}

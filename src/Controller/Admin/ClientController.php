@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class ClientController extends AbstractController
 {
     #[Route('/admin/client', name: 'app_admin_client')]
-    public function index(EntityManagerInterface $entityManager,#[CurrentUser] $user): Response
+    public function index(EntityManagerInterface $entityManager, #[CurrentUser] $user): Response
     {
         $clients = $entityManager->getRepository(Client::class)->findBy(['workspace' => $user->getWorkspace()]);
 
@@ -28,18 +28,18 @@ class ClientController extends AbstractController
     }
 
     #[Route('/admin/client/create', name: 'app_admin_client_create')]
-    public function create(Request $request,#[CurrentUser] $user,EntityManagerInterface $entityManager): Response
+    public function create(Request $request, #[CurrentUser] $user, EntityManagerInterface $entityManager): Response
     {
         $subscription = $entityManager->getRepository(Subscription::class)->findOneBy(['workspace' => $user->getWorkspace()]);
         $nbClient = $entityManager->getRepository(Client::class)->count(['workspace' => $user->getWorkspace()]);
 
-        if($nbClient >= $subscription->getNbClient()){
+        if ($nbClient >= $subscription->getNbClient()) {
             $this->addFlash('error', 'Vous avez atteint le nombre maximum de client pour votre abonnement.');
             return $this->redirectToRoute('app_admin_client');
         }
 
 
-        if($request->isMethod('POST')) {
+        if ($request->isMethod('POST')) {
             $client = new Client();
             $client->setWorkspace($user->getWorkspace());
             $client->setSociete($request->request->get('societe'));
@@ -49,7 +49,7 @@ class ClientController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Le client a bien été créé');
-            return $this->redirectToRoute('app_admin_client_edit',[
+            return $this->redirectToRoute('app_admin_client_edit', [
                 'id' => $client->getId()
             ]);
         }
@@ -59,13 +59,13 @@ class ClientController extends AbstractController
     }
 
     #[Route('/admin/client/{id}/edit', name: 'app_admin_client_edit')]
-    public function edit(Request $request,#[CurrentUser] $user,EntityManagerInterface $entityManager, Client $client): Response
+    public function edit(Request $request, #[CurrentUser] $user, EntityManagerInterface $entityManager, Client $client): Response
     {
-        if($client->getWorkspace() !== $user->getWorkspace()) {
+        if ($client->getWorkspace() !== $user->getWorkspace()) {
             throw $this->createAccessDeniedException();
         }
 
-        if($request->isMethod('POST')) {
+        if ($request->isMethod('POST')) {
             $client->setSociete($request->request->get('societe'));
             $client->setNom($request->request->get('nom'));
             $client->setEmail($request->request->get('email'));
@@ -81,19 +81,37 @@ class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/client/{id}/delete', name: 'app_admin_client_delete')]
-    public function delete(Request $request,#[CurrentUser] $user,EntityManagerInterface $entityManager, Client $client): Response
+    #[Route('/admin/client/{id}/show', name: 'app_admin_client_show')]
+    public function show(Request $request, #[CurrentUser] $user, EntityManagerInterface $entityManager, Client $client): Response
     {
-        if($client->getWorkspace() !== $user->getWorkspace()) {
+        if ($client->getWorkspace() !== $user->getWorkspace()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $publications = $entityManager->getRepository(Publication::class)->findBy([
+            'client' => $client
+        ]);
+
+        return $this->render('admin/client/show.html.twig', [
+            'client' => $client,
+            'publications' => $publications
+        ]);
+    }
+
+
+    #[Route('/admin/client/{id}/delete', name: 'app_admin_client_delete')]
+    public function delete(Request $request, #[CurrentUser] $user, EntityManagerInterface $entityManager, Client $client): Response
+    {
+        if ($client->getWorkspace() !== $user->getWorkspace()) {
             throw $this->createAccessDeniedException();
         }
 
         //TODO : Supprimer Toutes les publications
 
         $publications = $entityManager->getRepository(Publication::class)->findBy(['client' => $client]);
-        foreach ($publications as $publication){
+        foreach ($publications as $publication) {
             $commentaires = $entityManager->getRepository(Commentaire::class)->findBy(['publication' => $publication]);
-            foreach ($commentaires as $commentaire){
+            foreach ($commentaires as $commentaire) {
                 $entityManager->remove($commentaire);
             }
             $entityManager->remove($publication);
@@ -107,16 +125,16 @@ class ClientController extends AbstractController
     }
 
     #[Route('/admin/client/{id}/notify', name: 'app_admin_client_notify')]
-    public function notify(Request $request,#[CurrentUser] $user,EntityManagerInterface $entityManager, Client $client,MailerInterface $mailer): Response
+    public function notify(Request $request, #[CurrentUser] $user, EntityManagerInterface $entityManager, Client $client, MailerInterface $mailer): Response
     {
-        if($client->getWorkspace() !== $user->getWorkspace()) {
+        if ($client->getWorkspace() !== $user->getWorkspace()) {
             throw $this->createAccessDeniedException();
         }
 
         $email = (new TemplatedEmail())
             ->from('community@cmcheck.fr')
             ->to($client->getEmail())
-            ->subject('AtomikCMCheck - ' . $user->getNom() .' '.$user->getPrenom(). ' à besoin de votre validation')
+            ->subject('AtomikCMCheck - ' . $user->getNom() . ' ' . $user->getPrenom() . ' à besoin de votre validation')
             ->htmlTemplate('email/notify_client.html.twig')
             ->context([
                 'host' => 'https://' . $_SERVER['HTTP_HOST'],
