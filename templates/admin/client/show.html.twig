@@ -25,7 +25,7 @@
         <div class="card-inner p-2">
             <a href="{{ path('app_admin_client_notify',{id: client.getId()}) }}"
                class="btn btn-sm btn-warning btn-dim me-1">Notifier le client</a>
-            <a href="{{ path('app_admin_publication_create',{client: client.getId()}) }}"
+            <a href="{{ path('app_admin_publication_create',{client: client.getId(), back:'client'}) }}"
                class="btn btn-sm btn-primary btn-dim">Créer une nouvelle publication</a>
         </div>
     </div>

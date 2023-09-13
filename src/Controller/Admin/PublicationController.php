@@ -58,7 +58,8 @@ class PublicationController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('app_admin_publication_edit', [
-                'id' => $publication->getId()
+                'id' => $publication->getId(),
+                'back' => (!empty($request->query->get('back')) && $request->query->get('back') == 'client') ? 'client' : null
             ]);
 
         }
