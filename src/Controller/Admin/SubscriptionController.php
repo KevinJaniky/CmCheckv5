@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Client;
 use App\Entity\Subscription;
+use App\Service\LogSnagService;
 use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,7 +53,7 @@ class SubscriptionController extends AbstractController
     }
 
     #[Route('/admin/subscription/paiement/success', name: 'app_admin_subscription_paiement_success')]
-    public function success(#[CurrentUser] $user, EntityManagerInterface $entityManager,Request $request,StripeService $stripeService): Response
+    public function success(#[CurrentUser] $user, EntityManagerInterface $entityManager,Request $request,StripeService $stripeService,LogSnagService $logSnagService): Response
     {
         $subscription = $entityManager->getRepository(Subscription::class)->findOneBy(['user' => $user]);
 
@@ -73,6 +74,9 @@ class SubscriptionController extends AbstractController
 
         $entityManager->persist($subscription);
         $entityManager->flush();
+
+        $logSnagService->createUser('avance', $user);
+        $logSnagService->addEvent('User has upgraded to advanced plan', '🤑', 'subscription', $user);
 
         $this->addFlash('success','Votre abonnement a été mis à jour');
         return $this->redirectToRoute('app_admin_subscription');

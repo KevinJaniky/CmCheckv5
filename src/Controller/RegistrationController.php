@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Workspace;
 use App\Form\RegistrationFormType;
 use App\Security\SecurityAuthenticator;
+use App\Service\LogSnagService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,14 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, SecurityAuthenticator $authenticator, EntityManagerInterface $entityManager): Response
+    public function register(
+        Request                     $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        UserAuthenticatorInterface  $userAuthenticator,
+        SecurityAuthenticator       $authenticator,
+        EntityManagerInterface      $entityManager,
+        LogSnagService              $logSnagService
+    ): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -48,6 +56,8 @@ class RegistrationController extends AbstractController
             $entityManager->persist($subscription);
             $entityManager->flush();
             // do anything else you need here, like send an email
+            $logSnagService->createUser('free', $user);
+            $logSnagService->addEvent('New user was registered', '🥳', 'register', $user);
 
             return $userAuthenticator->authenticateUser(
                 $user,
