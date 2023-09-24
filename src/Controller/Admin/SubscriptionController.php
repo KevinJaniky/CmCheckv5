@@ -75,8 +75,8 @@ class SubscriptionController extends AbstractController
         $entityManager->persist($subscription);
         $entityManager->flush();
 
-        $logSnagService->createUser('avance', $user);
-        $logSnagService->addEvent('User has upgraded to advanced plan', '🤑', 'subscription', $user);
+        $logSnagService->addSubscription($user);
+        $logSnagService->pushUser('avance', $user);
 
         $this->addFlash('success','Votre abonnement a été mis à jour');
         return $this->redirectToRoute('app_admin_subscription');

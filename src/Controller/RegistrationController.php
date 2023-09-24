@@ -56,8 +56,8 @@ class RegistrationController extends AbstractController
             $entityManager->persist($subscription);
             $entityManager->flush();
             // do anything else you need here, like send an email
-            $logSnagService->createUser('free', $user);
-            $logSnagService->addEvent('New user was registered', '🥳', 'register', $user);
+            $logSnagService->addRegister($user);
+            $logSnagService->pushUser('free', $user);
 
             return $userAuthenticator->authenticateUser(
                 $user,
