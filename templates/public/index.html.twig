@@ -122,7 +122,8 @@
 
                 let card = $(this).parents('.publication_to_check');
                 let url = $(this).parents('.submitComment').attr('action');
-                let comment = $(this).parents('.submitComment').find('[name="commentaire"]').val();
+                let comment = $(this).parents('.submitComment').find('[name="commentaire"]').attr('id');
+                comment = tinyMCE.get(comment).getContent();
                 let action = $(this).attr('value');
 
                 $.ajax({
