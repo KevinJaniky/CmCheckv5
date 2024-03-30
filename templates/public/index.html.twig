@@ -76,8 +76,8 @@
                                 <form action="{{ path('app_public_action',{token: app.request.query.get('token'), id: publication.getId()}) }}"
                                       method="post" class="submitComment">
                                     <div class="form-group mb-1">
-                                        <label for="commentaire" class="form-label">Commentaire</label>
-                                        <textarea name="commentaire" id="commentaire" class="form-control"></textarea>
+                                        <label for="commentaire{{ loop.index0 }}" class="form-label">Commentaire</label>
+                                        <textarea name="commentaire" id="commentaire{{ loop.index0 }}" class="form-control commentaires"></textarea>
                                     </div>
                                     <div class="btn-group w-100 mt-0 d-flex">
                                         <button type="submit" name="action" value="validate" class="btn btn-success justify-content-center"
@@ -110,7 +110,7 @@
                 force_br_newlines: true,
                 force_p_newlines: false,
                 forced_root_block: false,
-                selector: 'textarea#commentaire',
+                selector: 'textarea.commentaires',
                 menubar: false,
                 plugins: 'emoticons,lists',
                 toolbar: 'undo redo | bold italic strikethrough | bullist numlist | emoticons',
