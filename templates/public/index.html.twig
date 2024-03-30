@@ -105,6 +105,17 @@
     <script>
         $(document).ready(function () {
             console.log('init')
+            tinymce.init({
+                force_br_newlines: true,
+                force_p_newlines: false,
+                forced_root_block: false,
+                selector: 'textarea#commentaire',
+                menubar: false,
+                plugins: 'emoticons,lists',
+                toolbar: 'undo redo | bold italic | bullist numlist | emoticons',
+            });
+
+
             $('.submitComment [type="submit"]').click(function (event) {
                 event.preventDefault();
 
